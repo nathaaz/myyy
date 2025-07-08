@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MLBB Account Checker by Iann Skyzo</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #121212; color: #eee; padding: 20px; max-width: 480px; margin: auto; }
+        h1 { text-align: center; color: #ff2d55; }
+        label, input, button { display: block; width: 100%; margin-top: 10px; }
+        input, button { padding: 10px; font-size: 1em; border-radius: 6px; border: none; }
+        button { background: #ff2d55; color: white; cursor: pointer; }
+        button:hover { background: #e0264a; }
+        .result { margin-top: 20px; background: #222; padding: 15px; border-radius: 6px; white-space: pre-wrap; }
+        footer { margin-top: 50px; text-align: center; font-size: 0.8em; color: #555; }
+    </style>
+</head>
+<body>
+    <h1>mlbb acccount checker by iann skyzo</h1>
+    <form id="checkerForm">
+        <label for="userId">User ID MLBB:</label>
+        <input type="text" id="userId" name="userId" placeholder="Masukkan User ID" required />
+
+        <label for="zoneId">Zone ID MLBB:</label>
+        <input type="text" id="zoneId" name="zoneId" placeholder="Masukkan Zone ID" required />
+
+        <button type="submit">Cek Tanggal Registrasi</button>
+    </form>
+    <div class="result" id="result"></div>
+    <footer>© 2025 MLBB Account Checker by Iann Skyzo</footer>
+
+    <script>
+        document.getElementById("checkerForm").addEventListener("submit", async function(e) {
+            e.preventDefault();
+            const userId = document.getElementById("userId").value.trim();
+            const zoneId = document.getElementById("zoneId").value.trim();
+            const resultDiv = document.getElementById("result");
+
+            if (!userId || !zoneId) {
+                resultDiv.textContent = "Mohon isi User ID dan Zone ID dengan benar.";
+                return;
+            }
+
+            resultDiv.textContent = "Sedang memproses...";
+
+            try {
+                // Contoh panggilan API lokal atau bisa kamu sesuaikan endpointnya
+                const response = await fetch("/api/check_account", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ userId, zoneId })
+                });
+
+                const data = await response.json();
+
+                if(data.status === "success") {
+                    resultDiv.textContent = `User ID: ${data.account_id}\nTanggal Registrasi: ${data.registration_date}\nPesan: ${data.message}`;
+                } else {
+                    resultDiv.textContent = `Error: ${data.message}`;
+                }
+            } catch (err) {
+                resultDiv.textContent = "Terjadi kesalahan saat menghubungi server.";
+            }
+        });
+    </script>
+</body>
+</html>
